@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Kelulusan Kelas IX - SMPN 4 Monano</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            DEFAULT: '#0F172A',
+                            dark: '#020617',
+                            light: '#1E293B'
+                        },
+                        kemdikbud: {
+                            blue: '#1565C0',
+                            yellow: '#FFB300',
+                            gray: '#F8FAFC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-kemdikbud-gray text-slate-800 flex flex-col min-h-screen">
+
+    <header class="bg-navy border-b-4 border-kemdikbud-yellow shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center space-x-3">
+            <div class="bg-kemdikbud-yellow p-2 rounded-full text-navy font-bold text-xl flex items-center justify-center w-12 h-12 shadow-inner">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div>
+                <h1 class="text-white font-bold text-sm sm:text-lg tracking-wide uppercase">SMP Negeri 4 Monano</h1>
+                <p class="text-kemdikbud-yellow text-xs sm:text-sm font-medium">Sistem Pengumuman Kelulusan Kelas IX • TA 2025/2026</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6">
+        
+        <div id="countdown-container" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 text-center mb-6">
+            <h2 class="text-slate-600 font-semibold text-sm sm:text-base mb-4 uppercase tracking-wider">
+                <i class="fa-regular fa-clock text-kemdikbud-blue mr-2"></i>Hitung Mundur Pengumuman Kelulusan
+            </h2>
+            <div class="grid grid-cols-4 gap-2 max-w-sm mx-auto mb-3">
+                <div class="bg-navy p-3 rounded-xl text-white">
+                    <span id="days" class="block text-xl sm:text-2xl font-bold text-kemdikbud-yellow">00</span>
+                    <span class="text-[10px] uppercase text-slate-400">Hari</span>
+                </div>
+                <div class="bg-navy p-3 rounded-xl text-white">
+                    <span id="hours" class="block text-xl sm:text-2xl font-bold text-kemdikbud-yellow">00</span>
+                    <span class="text-[10px] uppercase text-slate-400">Jam</span>
+                </div>
+                <div class="bg-navy p-3 rounded-xl text-white">
+                    <span id="minutes" class="block text-xl sm:text-2xl font-bold text-kemdikbud-yellow">00</span>
+                    <span class="text-[10px] uppercase text-slate-400">Menit</span>
+                </div>
+                <div class="bg-navy p-3 rounded-xl text-white">
+                    <span id="seconds" class="block text-xl sm:text-2xl font-bold text-kemdikbud-yellow">00</span>
+                    <span class="text-[10px] uppercase text-slate-400">Detik</span>
+                </div>
+            </div>
+            <p class="text-xs text-slate-500 font-medium">
+               Sistem kelulusan dibuka pada <span class="text-navy font-semibold">2 Juni 2026 Pukul 16:00 WITA</span>.
+            </p>
+        </div>
+
+        <div id="login-container" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hidden">
+            <div class="text-center max-w-md mx-auto mb-6">
+                <i class="fa-solid fa-id-card text-4xl text-kemdikbud-blue mb-2"></i>
+                <h2 class="text-xl font-bold text-navy">Masuk Sistem Kelulusan</h2>
+                <p class="text-sm text-slate-500 mt-1">Silakan masukkan NISN resmi Anda untuk melihat status kelulusan.</p>
+            </div>
+
+            <form id="form-cek" class="max-w-md mx-auto space-y-4" onsubmit="prosesCek(event)">
+                <div>
+                    <label for="nisn" class="block text-sm font-semibold text-slate-700 mb-1">Nomor Induk Siswa Nasional (NISN)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i class="fa-solid fa-key"></i>
+                        </span>
+                        <input type="number" id="nisn" required pattern="[0-9]*" inputmode="numeric"
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-kemdikbud-blue focus:border-kemdikbud-blue outline-none transition text-base" 
+                            placeholder="Contoh: 0114433498">
+                    </div>
+                </div>
+                <button type="submit" 
+                    class="w-full bg-kemdikbud-blue hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition duration-200 shadow-md shadow-blue-200 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Periksa Status Kelulusan</span>
+                </button>
+            </form>
+            <div id="error-msg" class="max-w-md mx-auto mt-3 text-center text-red-600 font-medium text-sm hidden"></div>
+        </div>
+
+        <div id="result-container" class="bg-white rounded-2xl shadow-md border-t-8 border-emerald-500 p-6 hidden">
+            <div class="text-center border-b-2 border-slate-200 pb-4 mb-6">
+                <h3 class="text-lg font-bold text-navy uppercase tracking-wide">Surat Keterangan Kelulusan</h3>
+                <p class="text-xs text-slate-500">SMP Negeri 4 Monano • Tahun Ajaran 2025/2026</p>
+            </div>
+
+            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-center mb-6">
+                <span class="inline-block bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-2 shadow-sm">Status</span>
+                <h4 class="text-2xl sm:text-3xl font-extrabold text-emerald-600 uppercase tracking-wide">Dinyatakan LULUS</h4>
+            </div>
+
+            <div class="bg-slate-50 rounded-xl p-4 border border-slate-150 mb-6 text-sm space-y-3">
+                <div class="grid grid-cols-3">
+                    <span class="text-slate-500 font-medium">Nama Siswa</span>
+                    <span class="col-span-2 text-navy font-bold" id="res-nama">-</span>
+                </div>
+                <div class="grid grid-cols-3">
+                    <span class="text-slate-500 font-medium">NISN</span>
+                    <span class="col-span-2 text-slate-700 font-mono" id="res-nisn">-</span>
+                </div>
+                <div class="grid grid-cols-3">
+                    <span class="text-slate-500 font-medium">Nomor Peserta</span>
+                    <span class="col-span-2 text-slate-700 font-mono" id="res-nopes">-</span>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 border-l-4 border-kemdikbud-yellow p-4 rounded-r-xl mb-6">
+                <h5 class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-1">
+                    <i class="fa-solid fa-quote-left mr-1"></i> Pesan & Motivasi Guru:
+                </h5>
+                <p class="text-slate-700 text-sm italic leading-relaxed" id="res-motivasi">-</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="kembaliCek()" 
+                    class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2.5 px-4 rounded-xl transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Kembali</span>
+                </button>
+                <button onclick="window.print()" 
+                    class="w-full bg-navy hover:bg-navy-light text-white font-medium py-2.5 px-4 rounded-xl transition shadow-md flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Cetak Bukti</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-navy-dark text-slate-400 text-center py-4 px-4 border-t border-navy-light text-xs mt-auto">
+        <p>&copy; 2026 SMP Negeri 4 Monano. All Rights Reserved.</p>
+        <p class="text-[11px] text-slate-500 mt-0.5">Copyright @Fadlianto Mento |dibuat untuk kemudahan akses informasi siswa.</p>
+    </footer>
+
+    <script>
+        // DATA MASTER SISWA (Database Lokal sesuai Gambar)
+        const dataSiswa = {
+            "3106890723": { nama: "AFDILA NUNA", nopes: "508", motivasi: "Selamat atas kelulusanmu! Ingatlah bahwa kesuksesan bukan akhir, melainkan awal dari petualangan hebatmu di bangku SMA/SMK nanti. Teruslah bersinar!" },
+            "0114433498": { nama: "ALMULIA RAMADANI", nopes: "511", motivasi: "Kerja kerasmu selama 3 tahun ini terbayar lunas. Tetaplah menjadi pribadi yang rendah hati, rajin, dan kejarlah cita-citamu setinggi langit!" },
+            "0112033430": { nama: "ANA MAHFUL", nopes: "512", motivasi: "Kelulusan ini adalah bukti bahwa kamu mampu melewati tantangan. Jaga semangat belajarmu dan jadikan ilmu yang didapat bermanfaat bagi sesama." },
+            "0114034108": { nama: "ANATASYA S. SAINI", nopes: "513", motivasi: "Selamat! Masa depan cerah sedang menantimu di luar sana. Jangan pernah ragu pada kemampuan dirimu sendiri untuk menaklukkan rintangan baru." },
+            "0112168137": { nama: "APRILIA TOONAWU", nopes: "589", motivasi: "Selamat hari kelulusan! Langkahmu masih panjang, isilah lembaran barumu di tingkat lanjut dengan prestasi dan kreativitas tanpa batas." },
+            "0119120478": { nama: "DESRI E. ATIMA", nopes: "514", motivasi: "Setiap usaha keras pasti berbuah manis, dan hari ini adalah buktinya. Pertahankan kedisiplinanmu dan teruslah melangkah maju penuh percaya diri!" },
+            "0113693479": { nama: "FLORA SAGITA SUNA", nopes: "515", motivasi: "Selamat lulus! Ibarat bunga, kini kamu siap mekar di tempat yang baru. Bawa nama baik almamater SMPN 4 Monano di mana pun kamu berada." },
+            "3100501183": { nama: "JELYTA PUTRI IN. TOMAYAHU", nopes: "517", motivasi: "Hasil luar biasa diraih oleh orang-orang yang gigih. Selamat atas kelulusanmu, teruslah menjadi inspirasi bagi teman-teman di sekitarmu!" },
+            "3119717396": { nama: "JULIA PAKAYA", nopes: "519", motivasi: "Pintu baru telah terbuka. Jangan pernah takut mencoba hal-hal positif yang baru di jenjang berikutnya. Selamat, kami bangga padamu!" },
+            "0114053130": { nama: "KHUMAIRAH RAHMAN", nopes: "520", motivasi: "Kelulusan adalah tangga pertama menuju kesuksesan besar. Tetaplah tekun beribadah dan belajar, impianmu sudah semakin dekat!" },
+            "0113632807": { nama: "LINA MOBILINGO", nopes: "521", motivasi: "Selamat atas pencapaian berharga ini! Jadikan kelulusan ini sebagai bahan bakar untuk bermimpi lebih besar dan melangkah lebih jauh." },
+            "0111777118": { nama: "LISAN IDRUS", nopes: "522", motivasi: "Keberhasilan hari ini adalah modal berharga untuk hari esok. Jaga karakter baikmu dan teruslah menjadi pembelajar sepanjang hayat!" },
+            "3106729926": { nama: "MOHAMAD HAIKAL IDRUS", nopes: "525", motivasi: "Selamat, jagoan! Kelulusan ini membuktikan ketangguhanmu. Gunakan kecerdasan dan keterampilanmu untuk menggapai masa depan yang gemilang." },
+            "0091810250": { nama: "MOHAMAD RAFI ADUKA", nopes: "526", motivasi: "Perjalanan di SMP telah usai dengan indah. Di tingkat SMA nanti, asah terus potensimu dan jangan pernah menyerah sebelum berjuang." },
+            "0101169081": { nama: "NATASYA MATALAUNI", nopes: "528", motivasi: "Selamat atas kelulusanmu! Tetap konsisten dalam kebaikan, raih cita-citamu dengan senyuman dan optimisme yang tinggi." },
+            "0112309688": { nama: "NUR AULIA AMORA YUSUF", nopes: "529", motivasi: "Selamat hari kelulusan! Kamu memiliki potensi besar di dalam dirimu. Teruslah belajar dan gapai cita-cita setinggi bintang." },
+            "0116042238": { nama: "PUTRA RAMADHAN KAU", nopes: "530", motivasi: "Selamat lulus! Jadilah pemuda yang tangguh, adaptif terhadap teknologi, dan selalu berbakti kepada orang tua. Sukses selalu!" },
+            "3112741105": { nama: "RAHMAN SUPARDI", nopes: "532", motivasi: "Selamat atas keberhasilanmu menyelesaikan pendidikan di SMPN 4 Monano. Terus asah bakatmu di jenjang berikutnya, masa depan menantimu!" },
+            "0109357824": { nama: "RISKIANTO AHMAD", nopes: "534", motivasi: "Kelulusan ini adalah kunci pembuka petualangan baru. Tetap fokus pada tujuan, disiplin, dan buktikan kamu bisa jadi yang terbaik!" },
+            "0115983110": { nama: "SALSA TOMAYAHU", nopes: "535", motivasi: "Selamat atas kelulusanmu yang indah ini! Pertahankan semangat ceriamu dan pancarkan energi positifmu di bangku sekolah baru nanti." },
+            "0117083124": { nama: "SELSI PULUHULAWA", nopes: "536", motivasi: "Kerja keras, doa, dan kesabaranmu telah membuahkan hasil hari ini. Selamat lulus, gapai cita-citamu dengan penuh integritas!" },
+            "0108684515": { nama: "SINTA RAHIMA", nopes: "537", motivasi: "Selamat atas keberhasilanmu! Jangan pernah berhenti belajar karena hidup tidak pernah berhenti memberikan pelajaran. Sukses menantimu!" },
+            "0105438404": { nama: "SYAHMINA CANDRADINATA", nopes: "568", motivasi: "Selamat hari kelulusan! Gantungkan cita-citamu setinggi langit, jika engkau jatuh, engkau akan jatuh di antara bintang-bintang." },
+            "0107861258": { nama: "TIYARA PAKAYA", nopes: "538", motivasi: "Kelulusan ini adalah gerbang awal menuju kesuksesan yang sesungguhnya. Tetap rendah hati dan giat belajar di jenjang yang baru!" },
+            "0118339690": { nama: "YUYUN ABDULLAH", nopes: "539", motivasi: "Selamat lulus! Terima kasih telah berjuang dengan baik selama di SMPN 4 Monano. Jaga api semangat belajarmu agar tetap menyala!" }
+        };
+
+        // Atur Waktu Target Pengumuman: 2 Juni 2026 16:00:00 WITA (WITA adalah UTC+8)
+        // Format ISO standard dengan timezone offset +08:00
+        const targetDate = new Date("2026-06-02T16:00:00+08:00").getTime();
+
+        const countdownInterval = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            // Kalkulasi Hari, Jam, Menit, Detik
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Tampilkan hasil hitung mundur
+            document.getElementById("days").innerText = String(days).padStart(2, '0');
+            document.getElementById("hours").innerText = String(hours).padStart(2, '0');
+            document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
+            document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
+
+            // Jika hitung mundur selesai
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown-container").classList.add("hidden");
+                document.getElementById("login-container").classList.remove("hidden");
+            }
+        }, 1000);
+
+        // Fungsi Proses Pengecekan NISN
+        function prosesCek(event) {
+            event.preventDefault();
+            const inputNisn = document.getElementById("nisn").value.trim();
+            const errorMsg = document.getElementById("error-msg");
+
+            if (dataSiswa.hasOwnProperty(inputNisn)) {
+                errorMsg.classList.add("hidden");
+                
+                // Set Data ke Tampilan Surat
+                document.getElementById("res-nama").innerText = dataSiswa[inputNisn].nama;
+                document.getElementById("res-nisn").innerText = inputNisn;
+                document.getElementById("res-nopes").innerText = dataSiswa[inputNisn].nopes;
+                document.getElementById("res-motivasi").innerText = dataSiswa[inputNisn].motivasi;
+
+                // Navigasi Tampilan
+                document.getElementById("login-container").classList.add("hidden");
+                document.getElementById("result-container").classList.remove("hidden");
+            } else {
+                errorMsg.innerText = "NISN tidak ditemukan! Periksa kembali nomor yang Anda masukkan.";
+                errorMsg.classList.remove("hidden");
+            }
+        }
+
+        // Fungsi Kembali ke Form Input
+        function kembaliCek() {
+            document.getElementById("result-container").classList.add("hidden");
+            document.getElementById("login-container").classList.remove("hidden");
+            document.getElementById("nisn").value = "";
+        }
+
+        // Jalankan cek instan (Opsional untuk testing, hapus/beri komentar jika ingin menunggu countdown asli)
+        // Untuk memunculkan form langsung saat pengembangan, hilangkan kelas 'hidden' di 'login-container' secara manual.
+    </script>
+</body>
+</html>
